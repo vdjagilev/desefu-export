@@ -1,5 +1,6 @@
 from abc import ABC, abstractmethod
 import sys
+import jsonpickle
 
 
 class AbstractFormatter(ABC):
@@ -7,7 +8,8 @@ class AbstractFormatter(ABC):
         self.result_file = result_file
         self.output_file = output_file
 
-        self.result_data = None
+        data = open(self.result_file, 'r', encoding='utf-8').read()
+        self.result_data = jsonpickle.decode(data)
 
     @abstractmethod
     def make_file(self):
