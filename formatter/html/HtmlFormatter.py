@@ -8,6 +8,7 @@ class HtmlFormatter(AbstractFormatter):
         of = open(self.output_file, 'w', encoding="utf-8")
 
         of.write('<!DOCTYPE html><html><head>')
+        of.write('<meta charset="utf-8">')
         of.write('<title>%s</title>' % os.path.basename(self.result_file))
         of.write('</head><body>')
 
@@ -41,6 +42,60 @@ class HtmlFormatter(AbstractFormatter):
             of.write("<tr><td><b>File count</b></td><td>%s</td></tr>"  % mod['files_count'])
             of.write("</table>")
 
+            if len(mod['data']) > 0:
+                of.write("<h5>Collected data</h5>")
+                file_list = sorted(mod['data'].keys())
+                for file_name in file_list:
+                    file_data = mod['data'][file_name]
+                    of.write("<b>%s</b>" % file_name)
+
+                    of.write("<ul>")
+                    for file_data_elem in file_data:
+                        if isinstance(file_data_elem, tuple):
+                            of.write("<li>")
+                            of.write("<ul>")
+                            for i in file_data_elem:
+                                of.write("<li>%s</li>" % i)
+                            of.write("</ul>")
+                            of.write("</li>")
+                        else:
+                            of.write("<li>%s</li>" % file_data_elem)
+                    of.write("</ul>")
+
+            try:
+                if len(mod['extract_data']) > 0:
+                    of.write("<h5>Extracted data</h5>")
+                    file_list = sorted(mod['extract_data'].keys())
+
+                    for file_name in file_list:
+                        file_data = mod['extract_data'][file_name]
+                        table_views = sorted(file_data.keys())
+                        of.write("<b style=\"background-color: #ccc;\">%s</b><br />" % file_name)
+
+                        for table in table_views:
+                            table_info = file_data[table]
+
+                            of.write("<b>%s</b>" % table)
+                            of.write("<table style=\"white-space: nowrap;\">")
+
+                            for col in table_info[0]:
+                                of.write("<th style=\"background-color: #ccc;\">%s</th>" % col)
+
+                            for row in table_info[1]:
+                                of.write("<tr>")
+                                for col_data in row:
+                                    if isinstance(col_data, bytes):
+                                        of.write("<td style=\"min-width: 100px;\">%s</td>" % col_data.decode('utf-8', 'ignore'))
+                                    else:
+                                        of.write("<td style=\"min-width: 100px;\">%s</td>" % col_data)
+                                of.write("</tr>")
+
+                            of.write("</table>")
+
+                        of.write('<hr />')
+            except KeyError:
+                pass
+
             sub_module_chain = None
 
             try:
@@ -50,6 +105,6 @@ class HtmlFormatter(AbstractFormatter):
 
             if sub_module_chain:
                 of.write('<hr />')
-                of.write("<div style=\"margin-left: 5px;\"")
+                of.write("<div style=\"padding-left: 5px; border-left: 3px; border-left-style: dotted; border-left-color: #ccc\"")
                 self.traverse_chain(of, sub_module_chain)
                 of.write("</div>")
