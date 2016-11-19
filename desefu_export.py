@@ -17,7 +17,7 @@ if __name__ == '__main__':
     print("Desefu export (%s)" % _version)
 
     result_file = None
-    output_file = 'output.html'
+    output_file = 'output_file.html'
 
     try:
         result_file = args[0]
@@ -29,6 +29,10 @@ if __name__ == '__main__':
 
     if options.format is not None:
         _format = options.format
+
+    if _format == 'pdf':
+        print("Sorry. PDF is not supported yet. Try to open html output file in browser and print it.")
+        exit()
 
     try:
         output_file = args[1] + _format

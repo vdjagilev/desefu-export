@@ -92,7 +92,7 @@ class HtmlFormatter(AbstractFormatter):
 
                             of.write("</table>")
 
-                        of.write('<hr />')
+                        of.write('<hr style="margin-bottom: 100px;" />')
             except KeyError:
                 pass
 
