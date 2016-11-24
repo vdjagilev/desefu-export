@@ -118,8 +118,6 @@ class HtmlFormatter(AbstractFormatter):
 
             try:
                 if len(mod['extract_data']) > 0:
-                    #of.write("<h5>Extracted data</h5>")
-                    #index_buffer[anchor] = "Extracted data"
                     result.content += "<h4 id=\"%d\">Extracted data</h4>" % IndexElement.anchor
                     mod_id_index.addNode(IndexElement("Extracted data"))
                     file_list = sorted(mod['extract_data'].keys())
@@ -127,7 +125,8 @@ class HtmlFormatter(AbstractFormatter):
                     for file_name in file_list:
                         file_data = mod['extract_data'][file_name]
                         table_views = sorted(file_data.keys())
-                        #of.write("<b style=\"background-color: #ccc;\">%s</b><br />" % file_name)
+
+                        result.content += "<b style=\"background-color: #ccc;\">%s</b><br />" % file_name
 
                         for table in table_views:
                             table_info = file_data[table]
@@ -141,10 +140,16 @@ class HtmlFormatter(AbstractFormatter):
                             for row in table_info[1]:
                                 result.content += "<tr>"
                                 for col_data in row:
+                                    cell_data = col_data
+
                                     if isinstance(col_data, bytes):
-                                        result.content += "<td style=\"min-width: 100px;\">%s</td>" % col_data.decode('utf-8', 'ignore')
+                                        cell_data = col_data.decode('utf-8', 'ignore')
+                                    elif col_data == None:
+                                        cell_data = "NULL"
                                     else:
-                                        result.content += "<td style=\"min-width: 100px;\">%s</td>" % col_data
+                                        cell_data = col_data
+
+                                    result.content += "<td style=\"min-width: 100px;\">%s</td>" % cell_data
                                 result.content += "</tr>"
 
                             result.content += "</table>"
