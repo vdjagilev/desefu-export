@@ -1,5 +1,5 @@
 from formatter.AbstractFormatter import AbstractFormatter
-import json
+import html
 import os
 
 
@@ -148,6 +148,9 @@ class HtmlFormatter(AbstractFormatter):
                                         cell_data = "NULL"
                                     else:
                                         cell_data = col_data
+
+                                    if isinstance(cell_data, str):
+                                        cell_data = html.escape(cell_data)
 
                                     result.content += "<td style=\"min-width: 100px;\">%s</td>" % cell_data
                                 result.content += "</tr>"
